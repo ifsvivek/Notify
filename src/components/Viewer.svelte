@@ -1,48 +1,34 @@
 <script>
-    import { createEventDispatcher } from 'svelte';
-    const dispatch = createEventDispatcher();
-  
     export let title = '';
     export let content = '';
-  
-    function handleChange(event) {
-      content = event.detail.value;
-    }
-  
-    function handleTitleChange(event) {
-      title = event.detail.value;
-    }
-  
-    function handleSave() {
-      dispatch('save', { title, content });
-    }
-  </script>
-  
-  <div class="note-editor">
+    const handleTitleChange = (e) => {
+        title = e.target.value;
+    };
+    const handleChange = (e) => {
+        content = e.target.value;
+    };
+    const handleSave = () => {
+        const notes = JSON.parse(localStorage.getItem('notes')) || [];
+        const newNote = { title, content };
+        const newNotes = [...notes, newNote];
+        localStorage.setItem('notes', JSON.stringify(newNotes));
+        title = '';
+        content = '';
+    };
+</script>
+<div class="note-editor">
     <input
-      type="text"
-      class="note-title"
-      placeholder="Title"
-      bind:value={title}
-      on:change={handleTitleChange}
+        type="text"
+        class="note-title"
+        placeholder="Title"
+        bind:value={title}
+        on:change={handleTitleChange}
     />
     <textarea
-      class="note-content"
-      placeholder="Write your note here..."
-      bind:value={content}
-      on:change={handleChange}
+        class="note-content"
+        placeholder="Write your note here..."
+        bind:value={content}
+        on:change={handleChange}
     />
     <button on:click={handleSave}>Save</button>
-  </div>
-  
-  <style>
-    .note-editor {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem; /* Add some space between title and content */
-    }
-  
-    .note-title {
-      font-size: 1.2rem;
-    }
-  </style>
+</div>

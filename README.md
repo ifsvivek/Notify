@@ -1,5 +1,4 @@
-# Notify
-
+# Notisfy
 Notify is a simple, yet powerful note-taking web application built with the FKit stack, which includes Firebase and SvelteKit.
 
 ## Features

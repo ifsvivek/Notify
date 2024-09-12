@@ -17,6 +17,7 @@
 	let password = '';
 	let isRegistering = false;
 	let isLoading = false;
+	let isDarkMode = false;
 
 	onMount(() => {
 		auth.onAuthStateChanged(async (firebaseUser) => {
@@ -166,10 +167,15 @@
 			saveNote();
 		}
 	}
+
+	function toggleTheme() {
+		isDarkMode = !isDarkMode;
+		document.body.classList.toggle('dark', isDarkMode);
+	}
 </script>
 
 <main class="container mx-auto p-4">
-	<h1 class="text-3xl font-bold mb-4">Markdown Note App</h1>
+	<h1 class="text-3xl font-bold mb-4">Notify</h1>
 
 	{#if error}
 		<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" role="alert">
@@ -180,7 +186,12 @@
 	{#if user}
 		<div class="flex justify-between items-center mb-4">
 			<p>Welcome, {user.email}!</p>
-			<button class="bg-red-500 text-white px-4 py-2 rounded" on:click={logout}> Logout </button>
+			<div>
+				<button class="bg-gray-500 text-white px-4 py-2 rounded mr-2" on:click={toggleTheme}>
+					{isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+				</button>
+				<button class="bg-red-500 text-white px-4 py-2 rounded" on:click={logout}> Logout </button>
+			</div>
 		</div>
 
 		<div class="flex">
@@ -194,6 +205,9 @@
 							class="cursor-pointer p-2 hover:bg-gray-100"
 							class:bg-gray-200={note.id === currentNote.id}
 							on:click={() => selectNote(note)}
+							role="button"
+							tabindex="0"
+							on:keydown={(e) => e.key === 'Enter' && selectNote(note)}
 						>
 							{note.title}
 						</li>
@@ -282,6 +296,34 @@
 </main>
 
 <style>
+	:global(.dark) {
+		background-color: #333;
+		color: #fff;
+	}
+	:global(.dark .bg-red-100) {
+		background-color: #ffccd5;
+	}
+	:global(.dark .bg-blue-500) {
+		background-color: #1e3a8a;
+	}
+	:global(.dark .bg-green-500) {
+		background-color: #065f46;
+	}
+	:global(.dark .bg-red-500) {
+		background-color: #b91c1c;
+	}
+	:global(.dark .bg-gray-100) {
+		background-color: #4b5563;
+	}
+	:global(.dark .bg-gray-200) {
+		background-color: #374151;
+	}
+	:global(.dark input),
+	:global(.dark textarea) {
+		background-color: #555;
+		color: #fff;
+		border-color: #777;
+	}
 	:global(.markdown-preview h1) {
 		font-size: 2em;
 		font-weight: bold;

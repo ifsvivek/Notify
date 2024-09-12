@@ -223,7 +223,7 @@
 </script>
 
 <nav class="text-white p-4 sticky top-0 z-10">
-	<div class="container mx-auto flex justify-between items-center">
+	<div class="mx-auto flex justify-between items-center">
 		<h1 class="btn text-2xl font-bold">Notify</h1>
 		{#if user}
 			<div class="flex items-center space-x-4">
@@ -241,7 +241,7 @@
 	</div>
 </nav>
 
-<main class="container mx-auto p-4 min-h-screen">
+<main class="mx-auto p-4 min-h-screen">
 	{#if error}
 		<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" role="alert">
 			<p>{error}</p>
@@ -250,7 +250,7 @@
 
 	{#if user}
 		<div class="flex flex-col md:flex-row">
-			<div class="w-full md:w-1/4 md:pr-4 mb-4 md:mb-0" style="flex-basis: 25%;">
+			<div class="w-full md:w-1/4 md:pr-4 mb-4 md:mb-0" style="flex-basis: 15%;">
 				<button class="btn btn-primary w-full mb-4" on:click={createNewNote}>New Note</button>
 				<button class="md:hidden btn w-full mb-4" on:click={toggleMobileMenu}>
 					{isMobileMenuOpen ? 'Hide Notes' : 'Show Notes'}
@@ -272,7 +272,7 @@
 				</ul>
 			</div>
 
-			<div class="w-full md:w-3/4" style="max-width: 75%;">
+			<div class="w-full md:w-3/4 md:max-w-[85%]">
 				{#if currentNote.id}
 					<div class="mb-4">
 						<input

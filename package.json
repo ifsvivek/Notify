@@ -26,6 +26,7 @@
 		"@vercel/postgres": "^0.10.0",
 		"firebase": "^10.13.1",
 		"firebase-admin": "^12.4.0",
+		"highlight.js": "^11.10.0",
 		"marked": "^12.0.2"
 	}
 }

@@ -1,13 +1,29 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<title>Notify</title>
-		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		%sveltekit.head%
-	</head>
-	<body data-sveltekit-preload-data="hover">
-		<div style="display: contents">%sveltekit.body%</div>
-	</body>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Notify</title>
+	<link rel="icon" href="%sveltekit.assets%/favicon.png" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	<meta property="og:title" content="Notify" />
+	<meta property="og:description" content="Manage your notes efficiently with Notify." />
+	<meta property="og:image" content="%sveltekit.assets%/social-image.png" />
+	<meta property="og:url" content="https://note.ifsvivek.tech/" />
+	<meta property="og:type" content="website" />
+
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content="Notify" />
+	<meta name="twitter:description" content="Manage your notes efficiently with Notify." />
+	<meta name="twitter:image" content="%sveltekit.assets%/social-image.png" />
+	<meta name="twitter:url" content="https://note.ifsvivek.tech/" />
+
+	%sveltekit.head%
+</head>
+
+<body data-sveltekit-preload-data="hover">
+	<div style="display: contents">%sveltekit.body%</div>
+</body>
+
 </html>

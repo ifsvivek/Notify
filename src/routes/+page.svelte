@@ -1,14 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
-	import { Remarkable, utils } from 'remarkable';
-	const { has, unescapeMd, replaceEntities, escapeHtml } = utils;
-	import { linkify } from 'remarkable/linkify';
+	import { marked } from 'marked';
 	import hljs from 'highlight.js';
-	import remarkableKatex from 'remarkable-katex';
-
-	import 'katex/dist/katex.css';
-	import 'highlight.js/styles/default.css';
-
+	import 'highlight.js/styles/github.css';
 	import {
 		auth,
 		createUserWithEmailAndPassword,
@@ -35,82 +29,6 @@
 		text: '#1f2937'
 	};
 
-	const createRenderer = (options) => {
-		const markdownOptions = {
-			html: true,
-			xhtmlOut: false,
-			breaks: false,
-			langPrefix: 'hljs language-',
-			linkTarget: '_blank" rel="noreferrer',
-			typographer: true,
-			quotes: `""''`,
-			doHighlight: true,
-			highlight(code, lang) {
-				if (!this.doHighlight) {
-					return '';
-				}
-				if (lang && hljs.getLanguage(lang)) {
-					try {
-						return hljs.highlight(code, { language: lang }).value;
-					} catch (_) {}
-				}
-				try {
-					return hljs.highlightAuto(code).value;
-				} catch (_) {}
-				return '';
-			},
-			...options
-		};
-
-		const md = new Remarkable('full', markdownOptions);
-
-		md.renderer.rules.fence = function (tokens, idx, options, env, instance) {
-			var token = tokens[idx];
-			var langClass = ' class="hljs"';
-			var langPrefix = options.langPrefix;
-			var langName = '',
-				fences,
-				fenceName;
-			var highlighted;
-
-			if (token.params) {
-				fences = token.params.split(/\s+/g);
-				fenceName = fences.join(' ');
-
-				if (has(instance.rules.fence_custom, fences[0])) {
-					return instance.rules.fence_custom[fences[0]](tokens, idx, options, env, instance);
-				}
-
-				langName = escapeHtml(replaceEntities(unescapeMd(fenceName)));
-				langClass = ' class="' + langPrefix + langName + '"';
-			}
-
-			if (options.highlight) {
-				highlighted =
-					options.highlight.apply(options, [token.content].concat(fences)) ||
-					escapeHtml(token.content);
-			} else {
-				highlighted = escapeHtml(token.content);
-			}
-
-			return (
-				'<pre><code' +
-				langClass +
-				'>' +
-				highlighted +
-				'</code></pre>' +
-				md.renderer.getBreak(tokens, idx)
-			);
-		};
-
-		md.use(remarkableKatex);
-		md.use(linkify);
-
-		return md;
-	};
-
-	const renderer = createRenderer();
-
 	onMount(() => {
 		auth.onAuthStateChanged(async (firebaseUser) => {
 			user = firebaseUser;
@@ -131,6 +49,16 @@
 				} catch (err) {
 					console.error('Error during authentication:', err);
 					error = err.message;
+				}
+			}
+		});
+
+		marked.setOptions({
+			highlight: function (code, lang) {
+				if (lang && hljs.getLanguage(lang)) {
+					return hljs.highlight(lang, code).value;
+				} else {
+					return hljs.highlightAuto(code).value;
 				}
 			}
 		});
@@ -368,7 +296,7 @@
 						></textarea>
 					{:else}
 						<div class="markdown-preview border rounded p-4">
-							{@html renderer.render(currentNote.content)}
+							{@html marked(currentNote.content)}
 						</div>
 					{/if}
 				{:else}

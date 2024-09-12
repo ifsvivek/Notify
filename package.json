@@ -27,6 +27,9 @@
 		"firebase": "^10.13.1",
 		"firebase-admin": "^12.4.0",
 		"highlight.js": "^11.10.0",
-		"marked": "^12.0.2"
+		"katex": "^0.16.11",
+		"marked": "^12.0.2",
+		"remarkable": "^2.0.1",
+		"remarkable-katex": "^1.2.1"
 	}
 }

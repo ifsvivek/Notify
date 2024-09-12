@@ -1,58 +1,98 @@
-# Notisfy
-Notify is a simple, yet powerful note-taking web application built with the FKit stack, which includes Firebase and SvelteKit.
+# Notify
 
-## Features
+Notify is a web application built with SvelteKit, TailwindCSS, and PostgreSQL. It allows users to create, update, and manage notes.
 
-- Create, edit, and delete notes
-- Save notes locally for offline use
-- Synchronize notes across devices with Firebase
-- Clean and intuitive user interface
+## Table of Contents
 
-## Getting Started
+- [Notify](#notify)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Development](#development)
+    - [Code Formatting](#code-formatting)
+    - [TailwindCSS](#tailwindcss)
+    - [SvelteKit](#sveltekit)
+  - [Configuration](#configuration)
+    - [Environment Variables](#environment-variables)
+    - [Prettier](#prettier)
+  - [License](#license)
 
-To get started with Notify, you need to have Node.js and npm installed on your machine.
+## Installation
 
 1. Clone the repository:
 
-```sh
-git clone https://github.com/ifsvivek/notify.git
-```
+   ```sh
+   git clone https://github.com/ifsvivek/Notify.git
+   cd Notify
+   ```
 
-2. Install the dependencies:
+2. Install dependencies:
 
-```sh
-cd notify
-npm install
-```
+   ```sh
+   npm install
+   ```
 
-3. Start the development server:
+3. Set up environment variables:
+   - Copy `.env.example` to `.env` and fill in the required values.
+
+## Usage
+
+To start the application in development mode:
 
 ```sh
 npm run dev
 ```
 
-Now, you can open your browser and navigate to `http://localhost:5173/` to see the app in action.
-
-## Building for Production
-
-To build the app for production, run:
+To build the application for production:
 
 ```sh
 npm run build
 ```
 
-This will create a `build` directory with the compiled assets.
+To preview the production build:
 
-## Contributing
+```sh
+npm run preview
+```
 
-Contributions are welcome! Please read the [contributing guidelines](CONTRIBUTING.md) first.
+Or just open the [live demo](https://note.ifsvivek.tech/).
+
+## Development
+
+### Code Formatting
+
+This project uses Prettier for code formatting. To check the code formatting:
+
+```sh
+npm run lint
+```
+
+To automatically format the code:
+
+```sh
+npm run format
+```
+
+### TailwindCSS
+
+TailwindCSS is used for styling. The configuration can be found in [`tailwind.config.js`].
+
+### SvelteKit
+
+SvelteKit is used as the framework. The main entry point is [`src/app.html`].
+
+## Configuration
+
+### Environment Variables
+
+The application requires the following environment variables:
+
+- [`POSTGRES_URL`]: The connection string for the PostgreSQL database.
+
+### Prettier
+
+Prettier configuration is located in [`.prettierrc`].
 
 ## License
 
-Notify is [MIT licensed](LICENSE).
-
-## Contact
-
-If you have any questions, feel free to reach out to me at [me@ifsvivek.tech](mailto:me@ifsvivek.tech).
-
-Enjoy using Notify!
+This project is licensed under the MIT License.

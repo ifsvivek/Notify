@@ -18,6 +18,7 @@
 	let isRegistering = false;
 	let isLoading = false;
 	let isDarkMode = false;
+	let isMobileMenuOpen = false;
 
 	onMount(() => {
 		auth.onAuthStateChanged(async (firebaseUser) => {
@@ -106,6 +107,7 @@
 			notes = [newNote, ...notes];
 			currentNote = newNote;
 			editMode = true;
+			isMobileMenuOpen = false;
 		} catch (err) {
 			console.error('Error creating new note:', err);
 			error = 'Failed to create new note. Please try again.';
@@ -115,6 +117,7 @@
 	async function selectNote(note) {
 		currentNote = { ...note };
 		editMode = false;
+		isMobileMenuOpen = false;
 	}
 
 	async function saveNote() {
@@ -172,9 +175,13 @@
 		isDarkMode = !isDarkMode;
 		document.body.classList.toggle('dark', isDarkMode);
 	}
+
+	function toggleMobileMenu() {
+		isMobileMenuOpen = !isMobileMenuOpen;
+	}
 </script>
 
-<main class="container mx-auto p-4">
+<main class="container mx-auto p-4 min-h-screen">
 	<h1 class="text-3xl font-bold mb-4">Notify</h1>
 
 	{#if error}
@@ -184,25 +191,34 @@
 	{/if}
 
 	{#if user}
-		<div class="flex justify-between items-center mb-4">
-			<p>Welcome, {user.email}!</p>
-			<div>
-				<button class="bg-gray-500 text-white px-4 py-2 rounded mr-2" on:click={toggleTheme}>
-					{isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+		<div class="flex flex-col sm:flex-row justify-between items-center mb-4">
+			<p class="mb-2 sm:mb-0">Welcome, {user.email}!</p>
+			<div class="flex flex-wrap justify-center sm:justify-end">
+				<button class="btn h-12 mr-2 mb-2 sm:mb-0" on:click={toggleTheme}>
+					{isDarkMode ? 'Light Mode' : 'Dark Mode'}
 				</button>
-				<button class="bg-red-500 text-white px-4 py-2 rounded" on:click={logout}> Logout </button>
+				<button class="btn h-12" on:click={logout}> Logout </button>
 			</div>
 		</div>
 
-		<div class="flex">
-			<div class="w-1/4 pr-4">
-				<button class="bg-blue-500 text-white px-4 py-2 rounded mb-4" on:click={createNewNote}>
+		<div class="flex flex-col sm:flex-row">
+			<div class="w-full sm:w-1/4 sm:pr-4 mb-4 sm:mb-0">
+				<button
+					class="bg-blue-500 text-white px-4 py-2 rounded mb-4 w-full"
+					on:click={createNewNote}
+				>
 					New Note
 				</button>
-				<ul>
+				<button
+					class="sm:hidden bg-gray-500 text-white px-4 py-2 rounded mb-4 w-full"
+					on:click={toggleMobileMenu}
+				>
+					{isMobileMenuOpen ? 'Hide Notes' : 'Show Notes'}
+				</button>
+				<ul class={`sm:block ${isMobileMenuOpen ? 'block' : 'hidden'}`}>
 					{#each notes as note (note.id)}
 						<li
-							class="cursor-pointer p-2 hover:bg-gray-100"
+							class="cursor-pointer p-2 hover:bg-gray-100 rounded"
 							class:bg-gray-200={note.id === currentNote.id}
 							on:click={() => selectNote(note)}
 							role="button"
@@ -215,7 +231,7 @@
 				</ul>
 			</div>
 
-			<div class="w-3/4">
+			<div class="w-full sm:w-3/4">
 				{#if currentNote.id}
 					<div class="mb-4">
 						<input
@@ -296,52 +312,62 @@
 </main>
 
 <style>
+	:global(body) {
+		transition: colors 0.2s;
+	}
 	:global(.dark) {
-		background-color: #333;
+		background-color: #1a202c;
 		color: #fff;
 	}
 	:global(.dark .bg-red-100) {
-		background-color: #ffccd5;
+		background-color: #742a2a;
+		color: #fed7d7;
 	}
 	:global(.dark .bg-blue-500) {
-		background-color: #1e3a8a;
+		background-color: #2b6cb0;
 	}
 	:global(.dark .bg-green-500) {
-		background-color: #065f46;
+		background-color: #2f855a;
 	}
 	:global(.dark .bg-red-500) {
-		background-color: #b91c1c;
+		background-color: #c53030;
 	}
 	:global(.dark .bg-gray-100) {
-		background-color: #4b5563;
+		background-color: #2d3748;
 	}
 	:global(.dark .bg-gray-200) {
-		background-color: #374151;
+		background-color: #4a5568;
 	}
 	:global(.dark input),
 	:global(.dark textarea) {
-		background-color: #555;
+		background-color: #2d3748;
 		color: #fff;
-		border-color: #777;
+		border-color: #718096;
 	}
 	:global(.markdown-preview h1) {
-		font-size: 2em;
+		font-size: 1.5rem;
 		font-weight: bold;
-		margin-bottom: 0.5em;
+		margin-bottom: 0.5rem;
 	}
 	:global(.markdown-preview h2) {
-		font-size: 1.5em;
+		font-size: 1.25rem;
 		font-weight: bold;
-		margin-bottom: 0.5em;
+		margin-bottom: 0.5rem;
 	}
 	:global(.markdown-preview p) {
-		margin-bottom: 1em;
+		margin-bottom: 1rem;
 	}
 	:global(.markdown-preview ul, .markdown-preview ol) {
-		margin-bottom: 1em;
-		padding-left: 2em;
+		margin-bottom: 1rem;
+		padding-left: 2rem;
 	}
 	:global(.markdown-preview li) {
-		margin-bottom: 0.5em;
+		margin-bottom: 0.5rem;
+	}
+	.btn {
+		background-color: #6b7280;
+		color: #fff;
+		padding: 0.5rem 1rem;
+		border-radius: 0.25rem;
 	}
 </style>

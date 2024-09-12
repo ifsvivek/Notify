@@ -197,7 +197,7 @@
 				<button class="btn h-12 mr-2 mb-2 sm:mb-0" on:click={toggleTheme}>
 					{isDarkMode ? 'Light Mode' : 'Dark Mode'}
 				</button>
-				<button class="btn h-12" on:click={logout}> Logout </button>
+				<button class="btn btn-red h-12" on:click={logout}> Logout </button>
 			</div>
 		</div>
 
@@ -217,15 +217,16 @@
 				</button>
 				<ul class={`sm:block ${isMobileMenuOpen ? 'block' : 'hidden'}`}>
 					{#each notes as note (note.id)}
-						<li
-							class="cursor-pointer p-2 hover:bg-gray-100 rounded"
-							class:bg-gray-200={note.id === currentNote.id}
-							on:click={() => selectNote(note)}
-							role="button"
-							tabindex="0"
-							on:keydown={(e) => e.key === 'Enter' && selectNote(note)}
-						>
-							{note.title}
+						<li>
+							<button
+								class="w-full text-left cursor-pointer p-2 hover:bg-gray-100 rounded {note.id ===
+								currentNote.id
+									? 'bg-gray-200'
+									: ''}"
+								on:click={() => selectNote(note)}
+							>
+								{note.title}
+							</button>
 						</li>
 					{/each}
 				</ul>
@@ -369,5 +370,8 @@
 		color: #fff;
 		padding: 0.5rem 1rem;
 		border-radius: 0.25rem;
+	}
+	.btn-red {
+		background-color: #c53030;
 	}
 </style>

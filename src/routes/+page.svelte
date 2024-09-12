@@ -222,7 +222,7 @@
 	}
 </script>
 
-<nav class="text-white p-4 sticky top-0 z-10">
+<nav class="text-white p-4 sticky top-0 z-10 backdrop-blur-xl">
 	<div class="mx-auto flex justify-between items-center">
 		<h1 class="btn text-2xl font-bold">Notify</h1>
 		{#if user}

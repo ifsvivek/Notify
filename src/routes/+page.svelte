@@ -10,6 +10,7 @@
 		signOut
 	} from '$lib/firebase';
 
+	// State management
 	let notes = [];
 	let currentNote = { id: null, title: '', content: '' };
 	let editMode = true;
@@ -19,60 +20,8 @@
 	let password = '';
 	let isRegistering = false;
 	let isLoading = false;
-	let isDarkMode = false;
+	let searchQuery = '';
 	let isMobileMenuOpen = false;
-	let isSettingsPanelOpen = false;
-	let customColors = {
-		primary: '#3b82f6',
-		secondary: '#10b981',
-		background: '#ffffff',
-		text: '#1f2937'
-	};
-
-	onMount(() => {
-		auth.onAuthStateChanged(async (firebaseUser) => {
-			user = firebaseUser;
-			if (user) {
-				try {
-					const idToken = await user.getIdToken();
-					const response = await fetch('/auth', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json'
-						},
-						body: JSON.stringify({ idToken })
-					});
-					if (!response.ok) {
-						throw new Error('Failed to authenticate with the server');
-					}
-					await fetchNotes();
-				} catch (err) {
-					console.error('Error during authentication:', err);
-					error = err.message;
-				}
-			}
-		});
-
-		marked.setOptions({
-			highlight: function (code, lang) {
-				if (lang && hljs.getLanguage(lang)) {
-					return hljs.highlight(lang, code).value;
-				} else {
-					return hljs.highlightAuto(code).value;
-				}
-			}
-		});
-	});
-
-	$: {
-		if (typeof document !== 'undefined') {
-			if (isDarkMode) {
-				document.body.classList.add('dark');
-			} else {
-				document.body.classList.remove('dark');
-			}
-		}
-	}
 
 	async function handleAuth() {
 		isLoading = true;
@@ -200,353 +149,315 @@
 		}
 	}
 
-	function toggleTheme() {
-		isDarkMode = !isDarkMode;
+	function closeMobileMenu() {
+		isMobileMenuOpen = false;
 	}
 
-	function toggleMobileMenu() {
-		isMobileMenuOpen = !isMobileMenuOpen;
-	}
+	// New function for search
+	$: filteredNotes = notes.filter(
+		(note) =>
+			note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			note.content.toLowerCase().includes(searchQuery.toLowerCase())
+	);
 
-	function toggleSettingsPanel() {
-		isSettingsPanelOpen = !isSettingsPanelOpen;
-	}
+	onMount(() => {
+		auth.onAuthStateChanged(async (firebaseUser) => {
+			user = firebaseUser;
+			if (user) {
+				try {
+					const idToken = await user.getIdToken();
+					const response = await fetch('/auth', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({ idToken })
+					});
+					if (!response.ok) {
+						throw new Error('Failed to authenticate with the server');
+					}
+					await fetchNotes();
+				} catch (err) {
+					console.error('Error during authentication:', err);
+					error = err.message;
+				}
+			}
+		});
 
-	function applyCustomColors() {
-		if (typeof document !== 'undefined') {
-			document.documentElement.style.setProperty('--color-primary', customColors.primary);
-			document.documentElement.style.setProperty('--color-secondary', customColors.secondary);
-			document.documentElement.style.setProperty('--color-background', customColors.background);
-			document.documentElement.style.setProperty('--color-text', customColors.text);
-		}
-	}
+		marked.setOptions({
+			highlight: function (code, lang) {
+				if (lang && hljs.getLanguage(lang)) {
+					return hljs.highlight(lang, code).value;
+				} else {
+					return hljs.highlightAuto(code).value;
+				}
+			},
+			headerIds: true,
+			gfm: true,
+			breaks: true,
+			sanitize: false // Allow HTML
+		});
+	});
 </script>
 
-<nav class="text-white p-4 sticky top-0 z-10 backdrop-blur-xl">
-	<div class="mx-auto flex justify-between items-center">
-		<h1 class="btn text-2xl font-bold">Notify</h1>
-		{#if user}
-			<div class="flex items-center space-x-4">
-				<button class="btn" on:click={toggleTheme}>
-					<i class={isDarkMode ? 'fas fa-sun' : 'fas fa-moon'}></i>
-				</button>
-				<button class="btn" on:click={toggleSettingsPanel}>
-					<i class="fas fa-cog"></i>
-				</button>
-				<button class="btn btn-red" on:click={logout}>
-					<i class="fas fa-sign-out-alt"></i>
-				</button>
-			</div>
-		{/if}
+<div class="min-h-screen bg-zinc-900">
+	<!-- Mobile Menu Button -->
+	<div class="md:hidden fixed top-4 right-4 z-30">
+		<button
+			class="p-2 rounded-md bg-zinc-800 shadow-lg"
+			on:click={() => (isMobileMenuOpen = !isMobileMenuOpen)}
+		>
+			<svg class="w-6 h-6 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d={isMobileMenuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'}
+				/>
+			</svg>
+		</button>
 	</div>
-</nav>
-
-<main class="mx-auto p-4 min-h-screen">
-	{#if error}
-		<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" role="alert">
-			<p>{error}</p>
-		</div>
-	{/if}
-
-	{#if user}
-		<div class="flex flex-col md:flex-row">
-			<div class="w-full md:w-1/4 md:pr-4 mb-4 md:mb-0" style="flex-basis: 15%;">
-				<button class="btn btn-primary w-full mb-4" on:click={createNewNote}>New Note</button>
-				<button class="md:hidden btn w-full mb-4" on:click={toggleMobileMenu}>
-					{isMobileMenuOpen ? 'Hide Notes' : 'Show Notes'}
-				</button>
-				<ul class={`note-list md:block ${isMobileMenuOpen ? 'block' : 'hidden'}`}>
-					{#each notes as note (note.id)}
-						<li>
-							<button
-								class="w-full text-left p-2 hover:bg-opacity-20 hover:bg-primary rounded {note.id ===
-								currentNote.id
-									? 'bg-opacity-20 bg-primary'
-									: ''}"
-								on:click={() => selectNote(note)}
-							>
-								{note.title}
-							</button>
-						</li>
-					{/each}
-				</ul>
+	<!-- Sidebar -->
+	<aside
+		class="fixed top-0 left-0 h-full w-[280px] md:w-64 border-r border-zinc-800
+    bg-zinc-900 z-20 transform transition-transform duration-200 ease-in-out
+    {isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}"
+	>
+		<div class="p-5">
+			<div class="flex items-center justify-between mb-8">
+				<h1 class="text-xl font-medium text-zinc-100">Notify</h1>
+				<div class="flex space-x-2">
+					<button class="p-2 hover:bg-zinc-800 rounded-md" on:click={logout}>
+						<svg
+							class="w-5 h-5 text-zinc-500"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+							/>
+						</svg>
+					</button>
+				</div>
 			</div>
 
-			<div class="w-full md:w-3/4 md:max-w-[85%]">
-				{#if currentNote.id}
-					<div class="mb-4">
-						<input
-							type="text"
-							bind:value={currentNote.title}
-							class="w-full p-2 border rounded"
-							placeholder="Note Title"
-						/>
-					</div>
-					<div class="flex justify-between mb-4">
-						<button class="btn btn-secondary" on:click={toggleEditMode}>
-							{editMode ? 'Preview' : 'Edit'}
-						</button>
-						<button class="btn btn-red" on:click={deleteNote}>Delete</button>
-					</div>
-					{#if editMode}
-						<textarea
-							bind:value={currentNote.content}
-							class="w-full h-64 p-2 border rounded"
-							placeholder="Write your note in Markdown..."
-						></textarea>
-					{:else}
-						<div class="markdown-preview border rounded p-4">
-							{@html marked(currentNote.content)}
-						</div>
-					{/if}
+			<!-- Search Bar -->
+			<div class="relative mb-6">
+				<input
+					type="text"
+					bind:value={searchQuery}
+					placeholder="Search..."
+					class="w-full px-3 py-2 bg-zinc-800 border border-zinc-800 rounded-md text-zinc-100 text-sm placeholder-zinc-600 focus:outline-none focus:border-blue-400"
+				/>
+			</div>
+
+			<!-- New Note Button -->
+			<button
+				on:click={createNewNote}
+				class="w-full py-2 px-3 mb-6 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-sm font-medium transition-colors duration-150"
+			>
+				New Note
+			</button>
+
+			<!-- Notes List -->
+			<div class="space-y-0.5">
+				{#each filteredNotes as note (note.id)}
+					<button
+						on:click={() => selectNote(note)}
+						class="w-full p-3 text-left rounded-md transition-colors duration-150
+                        {currentNote.id === note.id ? 'bg-zinc-800' : 'hover:bg-zinc-800'}"
+					>
+						<h3 class="text-sm font-medium text-zinc-100 truncate">
+							{note.title}
+						</h3>
+						<p class="text-xs text-zinc-400 truncate mt-1">{note.content}</p>
+					</button>
+				{/each}
+			</div>
+		</div>
+	</aside>
+
+	<!-- Main Content -->
+	<main class=" md:ml-64 min-h-screen transition-all duration-200">
+		{#if currentNote.id}
+			<div class="max-w-3xl mx-auto px-8 py-6">
+				<input
+					type="text"
+					bind:value={currentNote.title}
+					class="w-full text-2xl font-medium bg-transparent border-none focus:outline-none text-zinc-100 mb-4"
+					placeholder="Note title"
+				/>
+
+				<div class="flex space-x-3 mb-6">
+					<button
+						on:click={toggleEditMode}
+						class="px-3 py-1.5 text-sm rounded-md transition-colors duration-150 {editMode
+							? 'bg-emerald-800 text-zinc-100'
+							: 'text-zinc-400 hover:text-zinc-300'}"
+					>
+						{editMode ? 'Editing' : 'Preview'}
+					</button>
+					<button
+						on:click={deleteNote}
+						class="px-3 py-1.5 text-sm text-red-400 hover:text-red-300 transition-colors duration-150"
+					>
+						Delete
+					</button>
+				</div>
+
+				{#if editMode}
+					<textarea
+						bind:value={currentNote.content}
+						class="w-full h-[calc(100vh-250px)] p-4 bg-zinc-800 rounded-lg border border-zinc-700 focus:outline-none focus:border-blue-400 resize-none text-zinc-200 text-sm"
+						placeholder="Write your note..."
+					/>
 				{:else}
-					<p>Select a note or create a new one.</p>
+					<div class="prose dark:prose-invert prose-zinc max-w-none markdown-body">
+						{@html marked.parse(currentNote.content || '')}
+					</div>
 				{/if}
 			</div>
-		</div>
-	{:else}
-		<div class="max-w-md mx-auto">
-			<h2 class="text-2xl font-bold mb-4">{isRegistering ? 'Register' : 'Login'}</h2>
-			<form on:submit|preventDefault={handleAuth} class="space-y-4">
-				<div>
-					<label for="email" class="block mb-1">Email</label>
-					<input
-						type="email"
-						id="email"
-						bind:value={email}
-						required
-						class="w-full p-2 border rounded"
-					/>
-				</div>
-				<div>
-					<label for="password" class="block mb-1">Password</label>
-					<input
-						type="password"
-						id="password"
-						bind:value={password}
-						required
-						class="w-full p-2 border rounded"
-					/>
-				</div>
-				<button type="submit" class="btn btn-primary w-full" disabled={isLoading}>
-					{#if isLoading}
-						Loading...
-					{:else}
-						{isRegistering ? 'Register' : 'Login'}
-					{/if}
-				</button>
-			</form>
-			<p class="mt-4 text-center">
-				{isRegistering ? 'Already have an account?' : 'Need an account?'}
-				<button class="text-primary underline" on:click={() => (isRegistering = !isRegistering)}>
-					{isRegistering ? 'Login' : 'Register'}
-				</button>
-			</p>
+		{:else}
+			<div class="flex flex-col items-center justify-center h-[calc(100vh-100px)]">
+				<p class="text-sm text-zinc-500">Select a note or create a new one</p>
+			</div>
+		{/if}
+	</main>
+
+	<!-- Mobile Backdrop -->
+	{#if isMobileMenuOpen}
+		<button
+			type="button"
+			class="fixed inset-0 bg-black/30 backdrop-blur-sm z-10 md:hidden"
+			on:click={closeMobileMenu}
+			on:keydown={closeMobileMenu}
+			aria-label="Close menu"
+		></button>
+	{/if}
+
+	<!-- Auth Modal -->
+	{#if !user}
+		<div class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+			<div class="bg-zinc-900 rounded-lg shadow-xl p-6 w-full max-w-sm border border-zinc-800">
+				<h2 class="text-xl font-medium text-zinc-100 mb-6">
+					{isRegistering ? 'Create account' : 'Sign in'}
+				</h2>
+
+				<form on:submit|preventDefault={handleAuth} class="space-y-4">
+					<div>
+						<label for="email" class="block text-sm text-zinc-400 mb-1"> Email </label>
+						<input
+							type="email"
+							id="email"
+							bind:value={email}
+							required
+							class="w-full px-3 py-2 bg-transparent border border-zinc-800 rounded-md text-sm focus:outline-none focus:border-blue-400"
+						/>
+					</div>
+
+					<div>
+						<label for="password" class="block text-sm text-zinc-400 mb-1"> Password </label>
+						<input
+							type="password"
+							id="password"
+							bind:value={password}
+							required
+							class="w-full px-3 py-2 bg-transparent border border-zinc-800 rounded-md text-sm focus:outline-none focus:border-blue-400"
+						/>
+					</div>
+
+					<button
+						type="submit"
+						class="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-sm font-medium transition-colors duration-150"
+						disabled={isLoading}
+					>
+						{isLoading ? 'Please wait...' : isRegistering ? 'Create account' : 'Sign in'}
+					</button>
+				</form>
+
+				<p class="mt-4 text-center text-sm text-zinc-400">
+					{isRegistering ? 'Already have an account?' : "Don't have an account?"}
+					<button
+						class="text-blue-500 hover:text-blue-600 font-medium ml-1"
+						on:click={() => (isRegistering = !isRegistering)}
+					>
+						{isRegistering ? 'Sign in' : 'Create one'}
+					</button>
+				</p>
+			</div>
 		</div>
 	{/if}
-</main>
-
-{#if isSettingsPanelOpen}
-	<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-		<div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-			<h2 class="text-[#1f2937] text-2xl font-bold mb-4">Custom Colors</h2>
-			<div class="space-y-4">
-				<div>
-					<label for="primary-color" class="text-[#1f2937] block mb-1">Primary Color</label>
-					<input type="color" id="primary-color" bind:value={customColors.primary} class="w-full" />
-				</div>
-				<div>
-					<label for="secondary-color" class="text-[#1f2937] block mb-1">Secondary Color</label>
-					<input
-						type="color"
-						id="secondary-color"
-						bind:value={customColors.secondary}
-						class="w-full"
-					/>
-				</div>
-				<div>
-					<label for="background-color" class="text-[#1f2937] block mb-1">Background Color</label>
-					<input
-						type="color"
-						id="background-color"
-						bind:value={customColors.background}
-						class="w-full"
-					/>
-				</div>
-				<div>
-					<label for="text-color" class="text-[#1f2937] block mb-1">Text Color</label>
-					<input type="color" id="text-color" bind:value={customColors.text} class="w-full" />
-				</div>
-			</div>
-			<div class="mt-6 flex justify-end space-x-4">
-				<button class="text-[#1f2937]" on:click={toggleSettingsPanel}>Cancel</button>
-				<button
-					class="btn btn-primary"
-					on:click={() => {
-						applyCustomColors();
-						toggleSettingsPanel();
-					}}
-				>
-					Apply
-				</button>
-			</div>
-		</div>
-	</div>
-{/if}
+</div>
 
 <style>
 	:global(body) {
-		transition:
-			background-color 0.3s,
-			color 0.3s;
-		background-color: var(--color-background, #ffffff);
-		color: var(--color-text, #1f2937);
-	}
-	:global(.dark) {
-		--color-background: #1a202c;
-		--color-text: #ffffff;
-	}
-	:global(.btn) {
-		padding: 0.5rem 1rem;
-		border-radius: 0.25rem;
-		font-weight: 600;
-		transition:
-			background-color 0.3s,
-			color 0.3s;
-		color: var(--color-text, #1f2937); /* Ensure text color is set */
-	}
-	:global(.btn-primary) {
-		background-color: var(--color-primary, #3b82f6);
-		color: #ffffff;
-	}
-	:global(.btn-secondary) {
-		background-color: var(--color-secondary, #10b981);
-		color: #ffffff;
-	}
-	:global(.btn-red) {
-		background-color: #ef4444;
-		color: #ffffff;
-	}
-	:global(input, textarea) {
-		color: var(--color-text, #1f2937); /* Ensure text color is set */
-		background-color: var(--color-background, #ffffff); /* Ensure background color is set */
-		border: 1px solid #d1d5db; /* Light border color */
-	}
-	:global(input:focus, textarea:focus) {
-		outline: none;
-		border-color: var(--color-primary, #3b82f6); /* Focus border color */
-	}
-	:global(.markdown-preview h1) {
-		font-size: 1.5rem;
-		font-weight: bold;
-		margin-bottom: 0.5rem;
-	}
-	:global(.markdown-preview h2) {
-		font-size: 1.25rem;
-		font-weight: bold;
-		margin-bottom: 0.5rem;
-	}
-	:global(.markdown-preview p) {
-		margin-bottom: 1rem;
-	}
-	:global(.markdown-preview ul, .markdown-preview ol) {
-		margin-bottom: 1rem;
-		padding-left: 2rem;
-	}
-	:global(.markdown-preview li) {
-		margin-bottom: 0.5rem;
-	}
-	:global(.markdown-preview pre) {
-		margin-bottom: 1rem;
-		padding: 1rem;
-		background-color: #f3f4f6;
-		border-radius: 0.25rem;
-		overflow-x: auto;
-	}
-	:global(.dark .markdown-preview pre) {
-		background-color: #374151;
-	}
-	:global(nav) {
-		color: #ffffff; /* Ensure text color is set */
-	}
-	:global(nav h1) {
-		color: #ffffff; /* Ensure text color is set */
-	}
-	:global(.note-list) {
-		max-height: 300px; /* Set a maximum height for the note list */
-		overflow-y: auto; /* Make the note list scrollable if it exceeds the maximum height */
-	}
-	:global(.note-list button) {
-		color: var(--color-text, #1f2937); /* Text color based on theme */
-		background-color: var(--color-background, #ffffff); /* Default background */
+		@apply antialiased;
+		background-color: var(--bg-primary);
+		color: var(--text-primary);
 	}
 
-	:global(.note-list button:hover) {
-		background-color: var(--color-hover-background, #f3f4f6); /* Hover background based on theme */
+	@media (max-width: 768px) {
+		:global(button),
+		:global(input),
+		:global(textarea) {
+			@apply min-h-[44px] min-w-[44px]; /* Better touch targets */
+		}
+
+		:global(.markdown-body) {
+			@apply px-4;
+		}
+
+		main {
+			@apply px-4;
+		}
+
+		/* Improve mobile spacing */
+		.max-w-3xl {
+			@apply px-4;
+		}
 	}
 
-	:global(.note-list button.selected) {
-		background-color: var(--color-selected-background, #e5e7eb); /* Background for selected note */
+	/* Minimal scrollbar */
+	::-webkit-scrollbar {
+		width: 4px;
 	}
 
-	:global(.dark .note-list button) {
-		color: var(--color-text, #ffffff); /* Dark mode text color */
-		background-color: var(--color-background-dark, #1a202c); /* Dark mode background */
+	::-webkit-scrollbar-track {
+		@apply bg-transparent;
 	}
 
-	:global(.dark .note-list button:hover) {
-		background-color: var(--color-hover-background-dark, #374151); /* Dark mode hover background */
+	::-webkit-scrollbar-thumb {
+		@apply bg-zinc-700 rounded-full;
 	}
 
-	:global(.dark .note-list button.selected) {
-		background-color: var(
-			--color-selected-background-dark,
-			#2d3748
-		); /* Dark mode selected note background */
+	::-webkit-scrollbar-thumb:hover {
+		@apply bg-zinc-600;
+	}
+	:global(.markdown-body) {
+		@apply text-zinc-200;
 	}
 
-	:global(.fixed) {
-		position: fixed;
+	:global(.markdown-body h1) {
+		@apply text-2xl font-bold mt-6 mb-4;
 	}
-	:global(.inset-0) {
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
+
+	:global(.markdown-body h2) {
+		@apply text-xl font-bold mt-5 mb-3;
 	}
-	:global(.bg-black) {
-		background-color: rgba(0, 0, 0, 0.5);
+
+	:global(.markdown-body p) {
+		@apply mb-4;
 	}
-	:global(.bg-opacity-50) {
-		background-color: rgba(0, 0, 0, 0.5);
+
+	:global(.markdown-body code) {
+		@apply px-1 py-0.5 bg-zinc-800 rounded;
 	}
-	:global(.flex) {
-		display: flex;
-	}
-	:global(.items-center) {
-		align-items: center;
-	}
-	:global(.justify-center) {
-		justify-content: center;
-	}
-	:global(.bg-white) {
-		background-color: #ffffff;
-	}
-	:global(.p-6) {
-		padding: 1.5rem;
-	}
-	:global(.rounded-lg) {
-		border-radius: 0.5rem;
-	}
-	:global(.shadow-lg) {
-		box-shadow:
-			0 10px 15px -3px rgba(0, 0, 0, 0.1),
-			0 4px 6px -2px rgba(0, 0, 0, 0.05);
-	}
-	:global(.w-full) {
-		width: 100%;
-	}
-	:global(.max-w-md) {
-		max-width: 28rem;
+
+	:global(.markdown-body pre code) {
+		@apply p-4 block overflow-x-auto;
 	}
 </style>

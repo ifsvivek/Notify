@@ -4,9 +4,11 @@ import DOMPurify from 'dompurify';
 import markedKatex from 'marked-katex-extension';
 import markedAlert from 'marked-alert';
 
-marked.use(markedKatex({
-	throwOnError: false
-}));
+marked.use(
+	markedKatex({
+		throwOnError: false
+	})
+);
 
 marked.use(markedAlert());
 

@@ -8,8 +8,8 @@ Notify is a lightweight, local-first note-taking application designed for speed 
 
 - **🔒 Private by Default**: Your notes live in your browser's local storage. They never leave your device unless you export them.
 - **⚡ Blazing Fast**: No API calls, no loading spinners. Instant startup and navigation.
-- **📝 Markdown Native**: Write in standard Markdown with real-time preview and syntax highlighting.
-- **🌑 Dark Mode**: Easy on the eyes, perfect for late-night ideas.
+- **📝 Advanced Markdown**: Support for standard GFM, **LaTeX Mathematics**, **Mermaid Diagrams**, and **GitHub Alerts**.
+- **🌓 Dynamic Themes**: Beautifully crafted Light and Dark modes with a seamless toggle.
 - **📱 Responsive**: Works perfectly on desktop, tablet, and mobile.
 
 ## 🚀 Quick Start
@@ -34,8 +34,11 @@ npm run dev
 
 - **Framework**: [SvelteKit](https://kit.svelte.dev/)
 - **Styling**: [TailwindCSS](https://tailwindcss.com/)
-- **Storage**: LocalStorage / IndexedDB
-- **Markdown**: marked & highlight.js
+- **Storage**: LocalStorage
+- **Markdown**: [marked](https://marked.js.org/)
+- **Mathematics**: [KaTeX](https://katex.org/)
+- **Diagrams**: [Mermaid.js](https://mermaid.js.org/)
+- **Syntax Highlighting**: [highlight.js](https://highlightjs.org/)
 
 ## 🤝 Contributing
 

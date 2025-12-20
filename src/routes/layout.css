@@ -89,7 +89,7 @@
 
 .prose em,
 .prose i {
-	@apply italic text-(--text-primary);
+	@apply text-(--text-primary) italic;
 }
 
 .prose p {

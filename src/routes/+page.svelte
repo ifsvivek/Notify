@@ -12,13 +12,13 @@
 		if (noteStore.activeNote?.content && viewMode !== 'edit') {
 			// Add theme as dependency
 			const currentTheme = noteStore.theme;
-			
+
 			tick().then(async () => {
 				const elements = document.querySelectorAll('.mermaid');
 				for (const el of elements) {
 					const content = decodeURIComponent(el.getAttribute('data-content') || el.textContent);
 					const processedTheme = el.getAttribute('data-processed-theme');
-					
+
 					if (processedTheme === currentTheme) continue;
 
 					const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;

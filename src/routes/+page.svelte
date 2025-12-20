@@ -42,18 +42,18 @@
 </script>
 
 <div
-	class="flex h-screen overflow-hidden bg-[#fdfbf7] font-sans text-[#2c1810] selection:bg-orange-200"
+	class="flex h-screen overflow-hidden bg-(--bg-primary) font-sans text-(--text-primary) selection:bg-orange-200/30"
 >
 	<!-- Sidebar -->
 	<aside
-		class="fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-[#e8e2d5]/50 bg-[#f5f2ea]/80 backdrop-blur-xl transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 {isSidebarOpen
+		class="fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-(--border)/50 bg-(--bg-secondary)/80 backdrop-blur-xl transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 {isSidebarOpen
 			? 'translate-x-0'
 			: '-translate-x-full'}"
 	>
 		<div class="flex items-center justify-between p-6">
 			<div class="flex items-center gap-3">
 				<div
-					class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#e67e22] shadow-lg shadow-orange-900/10"
+					class="flex h-8 w-8 items-center justify-center rounded-lg bg-(--accent) shadow-lg shadow-orange-900/10"
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -69,10 +69,10 @@
 						/><path d="M12 3v13" /></svg
 					>
 				</div>
-				<h1 class="text-xl font-bold tracking-tight text-[#1a0f0a]">Notify</h1>
+				<h1 class="text-xl font-bold tracking-tight text-(--text-primary)">Notify</h1>
 			</div>
 			<button
-				class="rounded-lg p-2 text-[#8d7768] transition-all hover:bg-[#e8e2d5] hover:text-[#1a0f0a] lg:hidden"
+				class="rounded-lg p-2 text-(--text-secondary) transition-all hover:bg-(--border) hover:text-(--text-primary) lg:hidden"
 				onclick={toggleSidebar}
 				aria-label="Close Sidebar"
 			>
@@ -96,12 +96,12 @@
 				<input
 					type="text"
 					placeholder="Search notes..."
-					class="w-full rounded-xl border border-[#dcd4c5]/50 bg-[#e8e2d5]/50 py-2.5 pr-4 pl-10 text-sm text-[#2c1810] placeholder-[#a69080] transition-all focus:border-[#e67e22] focus:ring-2 focus:ring-[#e67e22]/20 focus:outline-none"
+					class="w-full rounded-xl border border-(--border)/50 bg-(--bg-secondary)/50 py-2.5 pr-4 pl-10 text-sm text-(--text-primary) placeholder-(--text-secondary) transition-all focus:border-(--accent) focus:ring-2 focus:ring-(--accent)/20 focus:outline-none"
 					bind:value={noteStore.searchQuery}
 				/>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
-					class="absolute top-3 left-3.5 h-4 w-4 text-[#a69080] transition-colors group-focus-within:text-[#e67e22]"
+					class="absolute top-3 left-3.5 h-4 w-4 text-(--text-secondary) transition-colors group-focus-within:text-(--accent)"
 					fill="none"
 					viewBox="0 0 24 24"
 					stroke="currentColor"
@@ -118,28 +118,28 @@
 					<button
 						class="group relative w-full cursor-pointer overflow-hidden rounded-xl p-4 text-left transition-all {noteStore.activeNoteId ===
 						note.id
-							? 'border border-[#e67e22]/20 bg-[#e67e22]/10'
-							: 'border border-transparent hover:bg-[#e8e2d5]/50'}"
+							? 'border border-(--accent)/20 bg-(--accent)/10'
+							: 'border border-transparent hover:bg-(--border)/50'}"
 						onclick={() => {
 							noteStore.selectNote(note.id);
 							if (window.innerWidth < 1024) isSidebarOpen = false;
 						}}
 					>
 						{#if noteStore.activeNoteId === note.id}
-							<div class="absolute top-0 bottom-0 left-0 my-3 w-1 rounded-full bg-[#e67e22]"></div>
+							<div class="absolute top-0 bottom-0 left-0 my-3 w-1 rounded-full bg-(--accent)"></div>
 						{/if}
 						<div
-							class="mb-1 truncate font-semibold text-[#2c1810] transition-colors group-hover:text-[#1a0f0a]"
+							class="mb-1 truncate font-semibold text-(--text-primary) transition-colors group-hover:text-(--accent)"
 						>
 							{note.title || 'Untitled Note'}
 						</div>
 						<div
-							class="mb-2 line-clamp-1 text-xs text-[#8d7768] transition-colors group-hover:text-[#3d2b1f]"
+							class="mb-2 line-clamp-1 text-xs text-(--text-secondary) transition-colors group-hover:text-(--text-primary)"
 						>
 							{getSnippet(note.content) || 'No additional content'}
 						</div>
 						<div
-							class="text-[10px] font-bold tracking-wider text-[#bca89a] uppercase transition-colors group-hover:text-[#8d7768]"
+							class="text-[10px] font-bold tracking-wider text-(--text-secondary)/60 uppercase transition-colors group-hover:text-(--text-secondary)"
 						>
 							{new Date(note.updatedAt).toLocaleDateString(undefined, {
 								month: 'short',
@@ -189,15 +189,15 @@
 	</aside>
 
 	<!-- Main Content -->
-	<main class="relative flex h-full flex-1 flex-col overflow-hidden bg-[#fdfbf7]">
+	<main class="relative flex h-full flex-1 flex-col overflow-hidden bg-(--bg-primary)">
 		{#if noteStore.activeNote}
 			<!-- Toolbar -->
 			<header
-				class="z-10 flex h-16 items-center justify-between border-b border-[#e8e2d5]/50 bg-[#f5f2ea]/30 px-6 backdrop-blur-md"
+				class="z-10 flex h-16 items-center justify-between border-b border-(--border)/50 bg-(--bg-secondary)/30 px-6 backdrop-blur-md"
 			>
 				<div class="flex items-center gap-4">
 					<button
-						class="rounded-lg p-2 text-[#8d7768] transition-all hover:bg-[#e8e2d5] hover:text-[#1a0f0a] lg:hidden"
+						class="rounded-lg p-2 text-(--text-secondary) transition-all hover:bg-(--border) hover:text-(--text-primary) lg:hidden"
 						onclick={toggleSidebar}
 						aria-label="Open Sidebar"
 					>
@@ -216,12 +216,12 @@
 					</button>
 
 					<!-- View Toggles -->
-					<div class="flex rounded-xl border border-[#dcd4c5]/30 bg-[#e8e2d5]/50 p-1">
+					<div class="flex rounded-xl border border-(--border)/30 bg-(--bg-secondary)/50 p-1">
 						<button
 							class="rounded-lg px-4 py-1.5 text-xs font-bold tracking-wider uppercase transition-all {viewMode ===
 							'edit'
-								? 'bg-[#e67e22] text-white shadow-md'
-								: 'text-[#8d7768] hover:text-[#2c1810]'}"
+								? 'bg-(--accent) text-white shadow-md'
+								: 'text-(--text-secondary) hover:text-(--text-primary)'}"
 							onclick={() => (viewMode = 'edit')}
 						>
 							Edit
@@ -229,8 +229,8 @@
 						<button
 							class="rounded-lg px-4 py-1.5 text-xs font-bold tracking-wider uppercase transition-all {viewMode ===
 							'split'
-								? 'bg-[#e67e22] text-white shadow-md'
-								: 'text-[#8d7768] hover:text-[#2c1810]'}"
+								? 'bg-(--accent) text-white shadow-md'
+								: 'text-(--text-secondary) hover:text-(--text-primary)'}"
 							onclick={() => (viewMode = 'split')}
 						>
 							Split
@@ -238,8 +238,8 @@
 						<button
 							class="rounded-lg px-4 py-1.5 text-xs font-bold tracking-wider uppercase transition-all {viewMode ===
 							'preview'
-								? 'bg-[#e67e22] text-white shadow-md'
-								: 'text-[#8d7768] hover:text-[#2c1810]'}"
+								? 'bg-(--accent) text-white shadow-md'
+								: 'text-(--text-secondary) hover:text-(--text-primary)'}"
 							onclick={() => (viewMode = 'preview')}
 						>
 							Preview
@@ -250,7 +250,56 @@
 				<!-- Actions -->
 				<div class="flex items-center gap-3">
 					<button
-						class="rounded-xl p-2.5 text-[#8d7768] transition-all hover:bg-red-50 hover:text-red-600 active:scale-95"
+						class="rounded-xl p-2.5 text-(--text-secondary) transition-all hover:bg-(--accent)/10 hover:text-(--accent) active:scale-95"
+						onclick={() => noteStore.toggleTheme()}
+						title="Toggle Theme"
+					>
+						{#if noteStore.theme === 'dark'}
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="h-5 w-5"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line
+									x1="12" y1="21"
+									x2="12"
+									y2="23"
+								/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line
+									x1="18.36"
+									y1="18.36"
+									x2="19.78"
+									y2="19.78"
+								/><line x1="1" y1="12" x2="3" y2="12" /><line
+									x1="21"
+									y1="12"
+									x2="23"
+									y2="12"
+								/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line
+									x1="18.36" y1="5.64"
+									x2="19.78"
+									y2="4.22"
+								/></svg
+							>
+						{:else}
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="h-5 w-5"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg
+							>
+						{/if}
+					</button>
+					<button
+						class="rounded-xl p-2.5 text-(--text-secondary) transition-all hover:bg-red-50 hover:text-red-600 active:scale-95"
 						onclick={() => {
 							if (confirm('Are you sure you want to delete this note?')) {
 								noteStore.deleteNote(noteStore.activeNote.id);
@@ -285,11 +334,11 @@
 				<div
 					class="flex flex-1 flex-col transition-all duration-300 {viewMode === 'preview'
 						? 'hidden'
-						: 'flex'} {viewMode === 'split' ? 'border-r border-[#e8e2d5]/50' : ''}"
+						: 'flex'} {viewMode === 'split' ? 'border-r border-(--border)/50' : ''}"
 					in:fade={{ duration: 200 }}
 				>
 					<textarea
-						class="custom-scrollbar h-full w-full flex-1 resize-none bg-transparent p-10 font-mono text-[15px] leading-relaxed text-[#2c1810] focus:outline-none"
+						class="custom-scrollbar h-full w-full flex-1 resize-none bg-transparent p-10 font-mono text-[15px] leading-relaxed text-(--text-primary) focus:outline-none"
 						placeholder="# Title&#10;&#10;Start writing your note here..."
 						value={noteStore.activeNote.content}
 						oninput={(e) => noteStore.updateNote(noteStore.activeNote.id, e.target.value)}
@@ -298,7 +347,7 @@
 
 				<!-- Preview -->
 				<div
-					class="custom-scrollbar flex flex-1 flex-col overflow-y-auto bg-[#fdfbf7]/50 {viewMode ===
+					class="custom-scrollbar flex flex-1 flex-col overflow-y-auto bg-(--bg-primary)/50 {viewMode ===
 					'edit'
 						? 'hidden'
 						: 'flex'}"
@@ -312,7 +361,7 @@
 			</div>
 		{:else}
 			<div
-				class="relative flex flex-1 items-center justify-center overflow-hidden bg-[#fdfbf7]"
+				class="relative flex flex-1 items-center justify-center overflow-hidden bg-(--bg-primary)"
 				in:fade
 			>
 				<!-- Decorative background elements -->
@@ -325,11 +374,11 @@
 
 				<div class="relative z-10 px-6 text-center">
 					<div
-						class="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-3xl border border-[#e8e2d5] bg-white shadow-xl"
+						class="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-3xl border border-(--border) bg-(--bg-secondary) shadow-xl"
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
-							class="h-12 w-12 text-[#e67e22]"
+							class="h-12 w-12 text-(--accent)"
 							viewBox="0 0 24 24"
 							fill="none"
 							stroke="currentColor"
@@ -346,14 +395,14 @@
 							></line></svg
 						>
 					</div>
-					<h2 class="mb-4 text-3xl font-bold tracking-tight text-[#1a0f0a]">
+					<h2 class="mb-4 text-3xl font-bold tracking-tight text-(--text-primary)">
 						Capture your thoughts
 					</h2>
-					<p class="mx-auto mb-10 max-w-sm leading-relaxed text-[#8d7768]">
+					<p class="mx-auto mb-10 max-w-sm leading-relaxed text-(--text-secondary)">
 						Notify is a minimal markdown note-taking app designed for focus and clarity.
 					</p>
 					<button
-						class="mx-auto flex items-center gap-3 rounded-2xl bg-[#e67e22] px-8 py-4 font-bold text-white shadow-xl shadow-orange-900/20 transition-all hover:-translate-y-1 hover:bg-[#d35400] active:scale-95"
+						class="mx-auto flex items-center gap-3 rounded-2xl bg-(--accent) px-8 py-4 font-bold text-white shadow-xl shadow-orange-900/20 transition-all hover:-translate-y-1 hover:bg-(--accent-hover) active:scale-95"
 						onclick={() => noteStore.addNote()}
 					>
 						<svg
@@ -378,7 +427,7 @@
 	<!-- Mobile Overlay -->
 	{#if isSidebarOpen}
 		<button
-			class="fixed inset-0 z-40 bg-[#2c1810]/20 backdrop-blur-sm lg:hidden"
+			class="fixed inset-0 z-40 bg-(--bg-secondary)/20 backdrop-blur-sm lg:hidden"
 			onclick={toggleSidebar}
 			transition:fade
 			aria-label="Close Sidebar"

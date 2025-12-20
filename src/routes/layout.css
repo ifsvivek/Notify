@@ -10,11 +10,32 @@
 		--text-primary: #2c1810; /* Deep Brown */
 		--text-secondary: #8d7768; /* Muted Brown */
 		--border: #e8e2d5;
+		--code-bg: #f5f2ea;
+		--code-text: #e67e22;
+		--pre-bg: #fdfbf7;
+		--pre-border: #e8e2d5;
+	}
+
+	:root.dark {
+		--bg-primary: #1a0f0a; /* Very Dark Brown */
+		--bg-secondary: #2c1810; /* Deep Brown */
+		--accent: #f39c12; /* Brighter Orange */
+		--accent-hover: #e67e22;
+		--text-primary: #fdfbf7; /* Cream */
+		--text-secondary: #bca89a; /* Muted Sand */
+		--border: #3d2b1f;
+		--code-bg: #3d2b1f;
+		--code-text: #f39c12;
+		--pre-bg: #2c1810;
+		--pre-border: #3d2b1f;
 	}
 
 	body {
-		@apply bg-[#fdfbf7] text-[#2c1810] antialiased selection:bg-orange-200;
+		@apply bg-(--bg-primary) text-(--text-primary) antialiased selection:bg-orange-200/30;
 		font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+		transition:
+			background-color 0.3s ease,
+			color 0.3s ease;
 	}
 }
 
@@ -29,11 +50,11 @@
 	}
 
 	.custom-scrollbar::-webkit-scrollbar-thumb {
-		@apply rounded-full bg-[#e8e2d5] transition-colors hover:bg-[#dcd4c5];
+		@apply rounded-full bg-(--border) transition-colors hover:bg-(--text-secondary);
 	}
 
 	.glass-panel {
-		@apply border border-[#e8e2d5]/50 bg-white/70 backdrop-blur-md;
+		@apply border border-(--border) bg-(--bg-secondary)/70 backdrop-blur-md;
 	}
 
 	.note-card {
@@ -41,24 +62,24 @@
 	}
 
 	.note-card:hover {
-		@apply translate-x-1 bg-[#f5f2ea];
+		@apply translate-x-1 bg-(--bg-secondary);
 	}
 
 	.note-card.active {
-		@apply border-l-4 border-l-[#e67e22] bg-orange-50;
+		@apply border-l-4 border-l-(--accent) bg-(--accent)/5;
 	}
 }
 
 /* Markdown Preview Styles */
 .prose {
-	@apply max-w-none text-[#3d2b1f];
+	@apply max-w-none text-(--text-primary);
 }
 
 .prose h1,
 .prose h2,
 .prose h3,
 .prose h4 {
-	@apply mt-6 mb-4 font-bold text-[#2c1810];
+	@apply mt-6 mb-4 font-bold text-(--text-primary);
 }
 
 .prose p {
@@ -66,15 +87,15 @@
 }
 
 .prose code {
-	@apply rounded bg-[#f5f2ea] px-1.5 py-0.5 font-mono text-sm text-[#e67e22];
+	@apply rounded bg-(--code-bg) px-1.5 py-0.5 font-mono text-sm text-(--code-text);
 }
 
 .prose pre {
-	@apply my-6 overflow-x-auto rounded-xl border border-[#3d2b1f] bg-[#2c1810] p-4;
+	@apply my-6 overflow-x-auto rounded-xl border border-(--pre-border) bg-(--pre-bg) p-4;
 }
 
 .prose pre code {
-	@apply bg-transparent p-0 text-[#fdfbf7];
+	@apply bg-transparent p-0 text-(--text-primary);
 }
 
 .prose ul,
@@ -87,11 +108,11 @@
 }
 
 .prose blockquote {
-	@apply my-6 border-l-4 border-[#e67e22]/50 pl-4 text-[#8d7768] italic;
+	@apply my-6 border-l-4 border-(--accent)/50 pl-4 text-(--text-secondary) italic;
 }
 
 .prose a {
-	@apply text-[#e67e22] underline decoration-orange-500/30 underline-offset-4 transition-colors hover:text-[#d35400];
+	@apply text-(--accent) underline decoration-orange-500/30 underline-offset-4 transition-colors hover:text-(--accent-hover);
 }
 
 /* GitHub Alerts */
@@ -100,41 +121,41 @@
 }
 
 .markdown-alert-note {
-	@apply border-blue-500 bg-blue-50/50;
+	@apply border-blue-500 bg-blue-500/10;
 }
 .markdown-alert-note .markdown-alert-title {
-	@apply font-bold text-blue-700;
+	@apply font-bold text-blue-500;
 }
 
 .markdown-alert-tip {
-	@apply border-green-500 bg-green-50/50;
+	@apply border-green-500 bg-green-500/10;
 }
 .markdown-alert-tip .markdown-alert-title {
-	@apply font-bold text-green-700;
+	@apply font-bold text-green-500;
 }
 
 .markdown-alert-important {
-	@apply border-purple-500 bg-purple-50/50;
+	@apply border-purple-500 bg-purple-500/10;
 }
 .markdown-alert-important .markdown-alert-title {
-	@apply font-bold text-purple-700;
+	@apply font-bold text-purple-500;
 }
 
 .markdown-alert-warning {
-	@apply border-yellow-500 bg-yellow-50/50;
+	@apply border-yellow-500 bg-yellow-500/10;
 }
 .markdown-alert-warning .markdown-alert-title {
-	@apply font-bold text-yellow-700;
+	@apply font-bold text-yellow-500;
 }
 
 .markdown-alert-caution {
-	@apply border-red-500 bg-red-50/50;
+	@apply border-red-500 bg-red-500/10;
 }
 .markdown-alert-caution .markdown-alert-title {
-	@apply font-bold text-red-700;
+	@apply font-bold text-red-500;
 }
 
 /* Mermaid */
 .mermaid {
-	@apply my-6 flex justify-center rounded-xl border border-[#e8e2d5] bg-white p-4 text-black;
+	@apply my-6 flex justify-center rounded-xl border border-(--border) bg-white p-4 text-black;
 }

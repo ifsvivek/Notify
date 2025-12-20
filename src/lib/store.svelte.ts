@@ -11,6 +11,7 @@ class NoteStore {
 	notes = $state<Note[]>([]);
 	activeNoteId = $state<string | null>(null);
 	searchQuery = $state('');
+	theme = $state<'light' | 'dark'>('light');
 
 	constructor() {
 		if (browser) {
@@ -23,6 +24,21 @@ class NoteStore {
 					this.notes = [];
 				}
 			}
+
+			const storedTheme = localStorage.getItem('notify-theme');
+			if (storedTheme === 'dark' || storedTheme === 'light') {
+				this.theme = storedTheme;
+			} else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+				this.theme = 'dark';
+			}
+		}
+	}
+
+	toggleTheme() {
+		this.theme = this.theme === 'light' ? 'dark' : 'light';
+		if (browser) {
+			localStorage.setItem('notify-theme', this.theme);
+			document.documentElement.classList.toggle('dark', this.theme === 'dark');
 		}
 	}
 

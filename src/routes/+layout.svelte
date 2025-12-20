@@ -1,5 +1,6 @@
 <script>
 	import './layout.css';
+	import 'highlight.js/styles/github-dark.css';
 	import favicon from '$lib/assets/favicon.svg';
 	
 	let { children } = $props();

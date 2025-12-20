@@ -15,7 +15,7 @@ marked.use(markedAlert());
 const renderer = {
 	code({ text, lang }) {
 		if (lang === 'mermaid') {
-			return `<div class="mermaid">${text}</div>`;
+			return `<div class="mermaid" data-content="${encodeURIComponent(text)}">${text}</div>`;
 		}
 		const language = hljs.getLanguage(lang) ? lang : 'plaintext';
 		const highlighted = hljs.highlight(text, { language }).value;
@@ -53,7 +53,9 @@ export function renderMarkdown(content) {
 			'stroke-linejoin',
 			'width',
 			'height',
-			'data-processed'
+			'data-processed',
+			'data-content',
+			'data-processed-theme'
 		]
 	});
 }

@@ -82,12 +82,31 @@
 	@apply mt-6 mb-4 font-bold text-(--text-primary);
 }
 
+.prose strong,
+.prose b {
+	@apply font-bold text-(--text-primary);
+}
+
+.prose em,
+.prose i {
+	@apply italic text-(--text-primary);
+}
+
 .prose p {
 	@apply mb-4 leading-relaxed;
 }
 
+.prose div,
+.prose section {
+	color: inherit;
+}
+
 .prose code {
 	@apply rounded bg-(--code-bg) px-1.5 py-0.5 font-mono text-sm text-(--code-text);
+}
+
+.prose kbd {
+	@apply rounded-md border border-(--border) bg-(--bg-secondary) px-1.5 py-0.5 font-sans text-xs font-medium text-(--text-primary) shadow-[0_2px_0_0_rgba(0,0,0,0.1)];
 }
 
 .prose pre {
@@ -157,5 +176,5 @@
 
 /* Mermaid */
 .mermaid {
-	@apply my-6 flex justify-center rounded-xl border border-(--border) bg-white p-4 text-black;
+	@apply my-6 flex justify-center rounded-xl border border-(--border) bg-(--pre-bg) p-4 text-(--text-primary);
 }

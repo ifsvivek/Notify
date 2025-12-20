@@ -10,17 +10,22 @@
 
 	$effect(() => {
 		if (noteStore.activeNote?.content && viewMode !== 'edit') {
+			// Add theme as dependency
+			const currentTheme = noteStore.theme;
+			
 			tick().then(async () => {
 				const elements = document.querySelectorAll('.mermaid');
 				for (const el of elements) {
-					if (el.getAttribute('data-processed')) continue;
+					const content = decodeURIComponent(el.getAttribute('data-content') || el.textContent);
+					const processedTheme = el.getAttribute('data-processed-theme');
+					
+					if (processedTheme === currentTheme) continue;
 
-					const content = el.textContent;
 					const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
 					try {
 						const { svg } = await mermaid.render(id, content);
 						el.innerHTML = svg;
-						el.setAttribute('data-processed', 'true');
+						el.setAttribute('data-processed-theme', currentTheme);
 					} catch (err) {
 						console.error('Mermaid render error:', err);
 						el.innerHTML = `<pre class="text-red-500 p-4 bg-red-50 rounded-lg">${err.message}</pre>`;

@@ -26,10 +26,12 @@
 		const m = await import('mermaid');
 		mermaid = m.default || m;
 
-		// Polyfill Buffer for y-webrtc/simple-peer in production
+		// Polyfill Buffer and process for y-webrtc/simple-peer in production
 		const { Buffer } = await import('buffer');
 		if (typeof window !== 'undefined') {
 			window.Buffer = Buffer;
+			window.global = window;
+			window.process = { env: {}, nextTick: (cb) => setTimeout(cb, 0) };
 		}
 
 		const { WebrtcProvider } = await import('y-webrtc');

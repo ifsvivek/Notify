@@ -6,5 +6,10 @@ export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
 	define: {
 		global: 'window'
+	},
+	resolve: {
+		alias: {
+			buffer: 'buffer/'
+		}
 	}
 });

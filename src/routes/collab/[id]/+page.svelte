@@ -26,6 +26,12 @@
 		const m = await import('mermaid');
 		mermaid = m.default || m;
 
+		// Polyfill Buffer for y-webrtc/simple-peer in production
+		const { Buffer } = await import('buffer');
+		if (typeof window !== 'undefined') {
+			window.Buffer = Buffer;
+		}
+
 		const { WebrtcProvider } = await import('y-webrtc');
 		const { IndexeddbPersistence } = await import('y-indexeddb');
 		

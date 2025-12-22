@@ -5,7 +5,9 @@ import { defineConfig } from 'vite';
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
 	define: {
-		global: 'window'
+		global: 'window',
+		'process.env': '{}',
+		'process.browser': 'true'
 	},
 	resolve: {
 		alias: {

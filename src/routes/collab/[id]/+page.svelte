@@ -31,7 +31,14 @@
 		if (typeof window !== 'undefined') {
 			window.Buffer = Buffer;
 			window.global = window;
-			window.process = { env: {}, nextTick: (cb) => setTimeout(cb, 0) };
+			window.globalThis.Buffer = Buffer;
+			if (!window.process) {
+				window.process = { 
+					env: { NODE_ENV: 'production' }, 
+					nextTick: (cb) => setTimeout(cb, 0),
+					browser: true 
+				};
+			}
 		}
 
 		const { WebrtcProvider } = await import('y-webrtc');
@@ -40,17 +47,22 @@
 		ydoc = new Y.Doc();
 		
 		// 1. Local Persistence (Offline Support)
-		// This ensures data is saved even if connection fails
 		const indexeddbProvider = new IndexeddbPersistence(`notify-store-${collabId}`, ydoc);
 		
 		// 2. Real-time Sync via WebRTC
-		// We use a reliable signaling server.
+		// Using a reliable public signaling server
 		provider = new WebrtcProvider(`notify-v6-${collabId}`, ydoc, {
-			signaling: ['wss://y-webrtc.fly.dev'],
+			signaling: [
+				'wss://y-webrtc.fly.dev'
+			],
 			peerOpts: {
 				config: {
 					iceServers: [
 						{ urls: 'stun:stun.l.google.com:19302' },
+						{ urls: 'stun:stun1.l.google.com:19302' },
+						{ urls: 'stun:stun2.l.google.com:19302' },
+						{ urls: 'stun:stun3.l.google.com:19302' },
+						{ urls: 'stun:stun4.l.google.com:19302' },
 						{ urls: 'stun:global.stun.twilio.com:3478' }
 					]
 				}
@@ -69,14 +81,14 @@
 		});
 
 		provider.on('status', (event) => {
+			console.log('Connection status:', event.connected ? 'Connected' : 'Connecting...');
 			status = event.connected ? 'Connected' : 'Connecting...';
-			if (event.connected) {
-				console.log('Connected to signaling server');
-			}
 		});
 
 		provider.awareness.on('change', () => {
-			users = provider.awareness.getStates().size;
+			const states = provider.awareness.getStates();
+			users = states.size;
+			console.log('Active users:', users, Array.from(states.values()));
 		});
 
 		ytext = ydoc.getText('content');
@@ -89,21 +101,15 @@
 		if (initialTitle) title = initialTitle;
 
 		ytext.observe((event) => {
-			console.log('Yjs update received');
 			const newContent = ytext.toString();
 			if (content !== newContent) {
 				content = newContent;
 
 				if (textareaRef) {
-					// If we're focused, we need to preserve the cursor position
 					if (document.activeElement === textareaRef) {
 						const cursorStart = textareaRef.selectionStart;
 						const cursorEnd = textareaRef.selectionEnd;
-
-						// Update value
 						textareaRef.value = newContent;
-
-						// Restore cursor (this is a simple version, might need adjustment for complex diffs)
 						textareaRef.setSelectionRange(cursorStart, cursorEnd);
 					} else {
 						textareaRef.value = newContent;
@@ -115,11 +121,12 @@
 		// Seed if empty after a short delay to allow sync
 		setTimeout(() => {
 			if (ytext.toString() === '' && initialContent) {
+				console.log('Seeding initial content');
 				ydoc.transact(() => {
 					ytext.insert(0, initialContent);
 				});
 			}
-		}, 1000);
+		}, 2000);
 	});
 
 	onDestroy(() => {

@@ -36,14 +36,9 @@
 		const indexeddbProvider = new IndexeddbPersistence(`notify-store-${collabId}`, ydoc);
 		
 		// 2. Real-time Sync via WebRTC
-		// We use a reliable signaling server. The public yjs.dev servers are currently down.
+		// We use a reliable signaling server.
 		provider = new WebrtcProvider(`notify-v6-${collabId}`, ydoc, {
-			signaling: [
-				'wss://y-webrtc.fly.dev',
-				'wss://signaling.yjs.dev',
-				'wss://y-webrtc-signaling-eu.herokuapp.com',
-				'wss://y-webrtc-signaling-us.herokuapp.com'
-			],
+			signaling: ['wss://y-webrtc.fly.dev'],
 			peerOpts: {
 				config: {
 					iceServers: [

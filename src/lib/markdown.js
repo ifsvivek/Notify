@@ -1,6 +1,7 @@
 import { marked } from 'marked';
 import hljs from 'highlight.js';
 import DOMPurify from 'dompurify';
+import { browser } from '$app/environment';
 import markedKatex from 'marked-katex-extension';
 import markedAlert from 'marked-alert';
 
@@ -27,7 +28,15 @@ marked.use({ renderer });
 
 export function renderMarkdown(content) {
 	const html = marked.parse(content || '');
-	return DOMPurify.sanitize(html, {
+
+	if (typeof window === 'undefined') return html;
+
+	// Handle potential import differences between environments
+	const purifier = DOMPurify.sanitize ? DOMPurify : (DOMPurify.default || DOMPurify);
+
+	if (typeof purifier.sanitize !== 'function') return html;
+
+	return purifier.sanitize(html, {
 		USE_PROFILES: { html: true, svg: true, mathMl: true },
 		ADD_TAGS: [
 			'blockquote',

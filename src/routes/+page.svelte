@@ -2,14 +2,19 @@
 	import { noteStore } from '$lib/store.svelte.ts';
 	import { renderMarkdown } from '$lib/markdown.js';
 	import { fade } from 'svelte/transition';
-	import { tick } from 'svelte';
-	import mermaid from 'mermaid';
+	import { tick, onMount } from 'svelte';
 
 	let viewMode = $state('split'); // 'edit', 'preview', 'split'
 	let isSidebarOpen = $state(true);
+	let mermaid;
+
+	onMount(async () => {
+		const m = await import('mermaid');
+		mermaid = m.default || m;
+	});
 
 	$effect(() => {
-		if (noteStore.activeNote?.content && viewMode !== 'edit') {
+		if (noteStore.activeNote?.content && viewMode !== 'edit' && mermaid) {
 			// Add theme as dependency
 			const currentTheme = noteStore.theme;
 
@@ -304,6 +309,29 @@
 								><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg
 							>
 						{/if}
+					</button>
+					<button
+						class="rounded-xl p-2.5 text-(--text-secondary) transition-all hover:bg-(--accent)/10 hover:text-(--accent) active:scale-95"
+						onclick={() => {
+							const collabId = Math.random().toString(36).substring(2, 15);
+							const url = `${window.location.origin}/collab/${collabId}?title=${encodeURIComponent(noteStore.activeNote.title)}&content=${encodeURIComponent(noteStore.activeNote.content)}`;
+							window.open(url, '_blank');
+						}}
+						title="Share & Collaborate"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-5 w-5"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline
+								points="16 6 12 2 8 6"
+							></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg
+						>
 					</button>
 					<button
 						class="rounded-xl p-2.5 text-(--text-secondary) transition-all hover:bg-red-50 hover:text-red-600 active:scale-95"

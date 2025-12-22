@@ -43,6 +43,8 @@
 		"marked": "^17.0.1",
 		"marked-alert": "^2.1.2",
 		"marked-katex-extension": "^5.1.6",
-		"mermaid": "^11.12.2"
+		"mermaid": "^11.12.2",
+		"y-webrtc": "^10.3.0",
+		"yjs": "^13.6.28"
 	}
 }

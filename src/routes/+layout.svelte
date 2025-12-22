@@ -3,12 +3,15 @@
 	import 'katex/dist/katex.min.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import { onMount } from 'svelte';
-	import mermaid from 'mermaid';
 	import { noteStore } from '$lib/store.svelte.ts';
 
 	let { children } = $props();
+	let mermaid;
 
-	onMount(() => {
+	onMount(async () => {
+		const m = await import('mermaid');
+		mermaid = m.default || m;
+
 		// Initialize theme from store
 		document.documentElement.classList.toggle('dark', noteStore.theme === 'dark');
 
@@ -21,7 +24,7 @@
 
 	// Update mermaid theme when app theme changes
 	$effect(() => {
-		if (noteStore.theme) {
+		if (noteStore.theme && mermaid) {
 			mermaid.initialize({
 				theme: noteStore.theme === 'dark' ? 'dark' : 'neutral'
 			});

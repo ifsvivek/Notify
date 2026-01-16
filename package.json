@@ -13,29 +13,29 @@
 		"deploy": "npm run build && wrangler deploy"
 	},
 	"devDependencies": {
-		"@eslint/compat": "^1.4.0",
+		"@eslint/compat": "^1.4.1",
 		"@eslint/js": "^9.39.1",
 		"@sveltejs/adapter-auto": "^7.0.0",
-		"@sveltejs/adapter-cloudflare": "^7.2.4",
-		"@sveltejs/kit": "^2.48.5",
-		"@sveltejs/vite-plugin-svelte": "^6.2.1",
+		"@sveltejs/adapter-cloudflare": "^7.2.5",
+		"@sveltejs/kit": "^2.49.5",
+		"@sveltejs/vite-plugin-svelte": "^6.2.4",
 		"@tailwindcss/typography": "^0.5.19",
-		"@tailwindcss/vite": "^4.1.17",
-		"@types/node": "^24",
+		"@tailwindcss/vite": "^4.1.18",
+		"@types/node": "^24.10.9",
 		"buffer": "^6.0.3",
-		"eslint": "^9.39.1",
+		"eslint": "^9.39.2",
 		"eslint-config-prettier": "^10.1.8",
-		"eslint-plugin-svelte": "^3.13.0",
+		"eslint-plugin-svelte": "^3.14.0",
 		"globals": "^16.5.0",
-		"prettier": "^3.6.2",
-		"prettier-plugin-svelte": "^3.4.0",
-		"prettier-plugin-tailwindcss": "^0.7.1",
-		"svelte": "^5.43.8",
+		"prettier": "^3.8.0",
+		"prettier-plugin-svelte": "^3.4.1",
+		"prettier-plugin-tailwindcss": "^0.7.2",
+		"svelte": "^5.46.4",
 		"tailwindcss": "^4.1.17",
 		"typescript": "^5.9.3",
-		"typescript-eslint": "^8.50.0",
-		"vite": "^7.2.2",
-		"wrangler": "^4.56.0"
+		"typescript-eslint": "^8.53.0",
+		"vite": "^7.3.1",
+		"wrangler": "^4.59.2"
 	},
 	"dependencies": {
 		"dompurify": "^3.3.1",
@@ -47,6 +47,6 @@
 		"mermaid": "^11.12.2",
 		"y-indexeddb": "^9.0.12",
 		"y-webrtc": "^10.3.0",
-		"yjs": "^13.6.28"
+		"yjs": "^13.6.29"
 	}
 }

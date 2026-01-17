@@ -8,7 +8,7 @@ export async function GET({ params, platform }) {
 
 	const session = await platform.env.COLLAB_SESSIONS.get(`session:${id}`, { type: 'json' });
 	if (!session) {
-		return json({ error: 'Session not found' }, { status: 404 });
+		return json({ session: null });
 	}
 
 	return json(session);

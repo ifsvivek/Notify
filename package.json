@@ -4,7 +4,7 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"dev": "vite dev --host 0.0.0.0",
+		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "npm run build && wrangler dev",
 		"prepare": "svelte-kit sync || echo ''",

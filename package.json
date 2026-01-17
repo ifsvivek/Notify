@@ -4,7 +4,7 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"dev": "vite dev",
+		"dev": "vite dev --host 0.0.0.0",
 		"build": "vite build",
 		"preview": "npm run build && wrangler dev",
 		"prepare": "svelte-kit sync || echo ''",
@@ -22,7 +22,6 @@
 		"@tailwindcss/typography": "^0.5.19",
 		"@tailwindcss/vite": "^4.1.18",
 		"@types/node": "^24.10.9",
-		"buffer": "^6.0.3",
 		"eslint": "^9.39.2",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.14.0",
@@ -45,8 +44,6 @@
 		"marked-alert": "^2.1.2",
 		"marked-katex-extension": "^5.1.6",
 		"mermaid": "^11.12.2",
-		"y-indexeddb": "^9.0.12",
-		"y-webrtc": "^10.3.0",
 		"yjs": "^13.6.29"
 	}
 }
